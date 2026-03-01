@@ -17,10 +17,10 @@ static uint32_t ir_filtered[BATCH_BUF_SIZE] = {0};    /* 红外光滤波后数�
 static float red_ac[BATCH_BUF_SIZE] = {0};            /* 红光AC分量 */
 static float ir_ac[BATCH_BUF_SIZE] = {0};             /* 红外光AC分量 */
 
-static float red_diff[BATCH_BUF_SIZE];      
+static float ir_diff[BATCH_BUF_SIZE];      
 static uint16_t neg_valley_idx[BATCH_BUF_SIZE];        
 static float neg_valley_val[BATCH_BUF_SIZE];       
-static uint8_t neg_count = 0;
+static uint16_t neg_count = 0;
 
 static uint8_t s_hr_buf[HR_AVG_WINDOW] = {0};      /* 心率滤波缓存 */
 static uint8_t s_hr_idx = 0;                       /* 心率缓存索引 */
@@ -46,8 +46,8 @@ static uint8_t MAX30102_CollectAndProcessAC(uint8_t *fifo_buffuer) {
                        ((uint32_t)fifo_buffuer[4] << 8)  |
                        (uint32_t)fifo_buffuer[5];
 
-    red_adc >>= 6; /* 取18bit有效数据 */
-    ir_adc >>= 6;
+    red_adc = red_adc & 0x3FFFF; /* 取18bit有效数据 */
+    ir_adc = ir_adc & 0x3FFFF;
 
     /* 2. 缓存原始数据 */
     if(buf_count < BATCH_BUF_SIZE)
@@ -96,19 +96,19 @@ static uint8_t MAX30102_CollectAndProcessAC(uint8_t *fifo_buffuer) {
 /* 波峰检测：输出两个波峰索引 */
 void MAX30102_DetectPeaks(uint16_t *peaks)
 {
-    memset(red_diff, 0, sizeof(red_diff));
+    memset(ir_diff, 0, sizeof(ir_diff));
     uint8_t peak_count = 0;
 
     /* 1. 计算AC信号一阶导 */ 
     for(uint16_t i = 1; i < BATCH_BUF_SIZE - 2; i++)
     {
-        red_diff[i] = red_ac[i] - red_ac[i-1];
+        ir_diff[i] = ir_ac[i] - ir_ac[i-1];
     }
      
     /* 2. 判定波峰：一阶导由正变负 + 最小间隔 */
     for(uint16_t i = 1; i < BATCH_BUF_SIZE - 2; i++)
     {
-        if(red_diff[i] > 5 && red_diff[i+1] < 5)
+        if(ir_diff[i] > 50 && ir_diff[i+1] < -100)
         {
             if(peak_count == 0 || (i - peaks[peak_count-1]) >= MIN_PEAK_INTERVAL)
             {
@@ -127,12 +127,12 @@ void MAX30102_DetectPeaks(uint16_t *peaks)
         
         for(uint16_t i = 0; i < BATCH_BUF_SIZE - 2; i++)
         {
-            if(red_ac[i] < 0)
+            if(ir_ac[i] < 0)
             {
                 if(neg_count < BATCH_BUF_SIZE)
                 {
                     neg_valley_idx[neg_count] = i;
-                    neg_valley_val[neg_count] = red_ac[i];
+                    neg_valley_val[neg_count] = ir_ac[i];
                     neg_count++;
                 }
             }

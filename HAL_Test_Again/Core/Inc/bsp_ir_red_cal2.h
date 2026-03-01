@@ -19,10 +19,10 @@ extern "C" {
 #define SAMPLE_RATE 100        /* 采样率 (Hz) */
 #define FILTER_WINDOW 3        /* 3点移动平均滤波窗口大小 */
 #define BATCH_BUF_SIZE 200     /* 原始数据批量缓存大小 */
-#define MIN_PEAK_INTERVAL 40   /* 最小波峰间隔 */
+#define MIN_PEAK_INTERVAL 30   /* 最小波峰间隔 */
 #define MAX_PEAK_INTERVAL 150  /* 最大波峰间隔 */
-#define HR_AVG_WINDOW    2     /* 心率滑动平均窗口大小 */
-#define SPO2_AVG_WINDOW  2     /* 血氧滑动平均窗口大小 */
+#define HR_AVG_WINDOW    3     /* 心率滑动平均窗口大小 */
+#define SPO2_AVG_WINDOW  3     /* 血氧滑动平均窗口大小 */
 
 /* Exported types ------------------------------------------------------------*/
 /* 处理结果结构体 */

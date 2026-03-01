@@ -6,7 +6,7 @@
 
 static TIM_HandleTypeDef *s_htim = NULL;
 //static volatile uint32_t s_millis = 0;
-static uint8_t tim_counter = 0;
+static uint16_t tim_counter = 0;
 
 /* 初始化定时器模块 */
 void BSP_TIM_Init(TIM_HandleTypeDef *htim)
