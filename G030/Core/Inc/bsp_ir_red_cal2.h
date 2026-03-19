@@ -13,14 +13,14 @@ extern "C" {
 #include <stdint.h>
 
 /* Defines -------------------------------------------------------------------*/
-#define SMOOTH_BUF_SIZE     3       /* 心率血氧平滑缓冲区大小 */
+#define SMOOTH_BUF_SIZE     3       /* 心率校准平滑缓冲区大小 */
 #define SAMPLE_RATE         100     /* 采样率 (Hz) */
 #define FILTER_WINDOW       3       /* 移动平均滤波窗口 */
 #define BATCH_BUF_SIZE      200     /* 原始数据批量缓存大小 */
 #define MIN_PEAK_INTERVAL   30      /* 最小波峰间隔 (采样点) */
 #define MAX_PEAK_INTERVAL   150     /* 最大波峰间隔 (采样点) */
 #define HR_AVG_WINDOW       3       /* 心率滑动平均窗口 */
-#define SPO2_AVG_WINDOW     3       /* 血氧滑动平均窗口 */
+#define SPO2_AVG_WINDOW     5       /* 血氧滑动平均窗口 */
 
 /* Types ---------------------------------------------------------------------*/
 /* 单次计算结果 */

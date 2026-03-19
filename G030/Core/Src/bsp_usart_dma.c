@@ -14,7 +14,7 @@ static volatile uint8_t tx_complete = 1;    /* 发送完成标志 */
 /* UART DMA 发送 */
 void UART_Transmit_DMA(char *buf)
 {
-    if (tx_complete == 0 && huart1.gState == HAL_UART_STATE_READY)
+    if (tx_complete == 0)
     {
         tx_complete = 1;
     }

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @file  bsp_ir_red_cal2.c
  * @brief MAX30102 心率血氧数据处理实现
  */
@@ -10,12 +10,11 @@
 #include <stdlib.h>
 
 /* Private types -------------------------------------------------------------*/
-/* 心率血氧平滑缓冲区 (环形) */
+/* 心率校准平滑缓冲区 (环形) */
 static struct {
     uint8_t index;                          /* 当前写入位置 */
     uint8_t averaged;                       /* 是否已完成首次平均 */
     uint8_t heart_rate[SMOOTH_BUF_SIZE];
-    uint8_t spo2[SMOOTH_BUF_SIZE];
 } smooth_buf = {0};
 
 /* AC 缓存区 */
@@ -246,7 +245,7 @@ void MAX30102_CalcVitalSigns(uint16_t *peaks)
         if (ir_ac[i]  > ir_ac_max)  ir_ac_max  = ir_ac[i];
     }
 
-    /* 计算 SpO2 */
+    /* 计算 SpO2 (不参与校准, 由后级滑动平均滤波器降噪) */
     if (ir_ac_max > 0.0f && red_dc_global > 0.0f) {
         float R = (red_ac_max * ir_dc_global) / (ir_ac_max * red_dc_global);
         result.spo2 = (uint8_t)(104.0f - 17.0f * R);
@@ -259,13 +258,11 @@ void MAX30102_CalcVitalSigns(uint16_t *peaks)
 
     new_hr_pos = hr_pos;
     new_hr_neg = hr_neg;
-    uint8_t new_spo2 = result.spo2;
     uint8_t new_hr = 0;
 
-    /* 血氧心率校准机制 */
+    /* 心率校准机制 */
     uint8_t quiet_is_reasonable = (new_hr_pos > 60 && new_hr_pos < 90 &&
-                                   new_hr_neg > 60 && new_hr_neg < 90 &&
-                                   new_spo2 >= 90);
+                                   new_hr_neg > 60 && new_hr_neg < 90);
 
     /* 判断心率是否在 40~150 之间 */
     uint8_t pos_valid = (new_hr_pos >= 40 && new_hr_pos <= 150);
@@ -286,35 +283,29 @@ void MAX30102_CalcVitalSigns(uint16_t *peaks)
             /* 首次抓到完美静息数据, 直接输出并打底 */
             new_hr = (new_hr_pos + new_hr_neg) / 2;
             smooth_buf.heart_rate[0] = new_hr;
-            smooth_buf.spo2[0] = new_spo2;
             smooth_buf.index = 1;
             smooth_buf.averaged = 1;
         }
         else if (smooth_buf.averaged == 1)
         {
             /* 存满后用平均值覆盖第 0 位作为新基准 */
-            uint16_t sum_hr = 0, sum_spo2 = 0;
+            uint16_t sum_hr = 0;
             for (uint8_t i = 0; i < SMOOTH_BUF_SIZE; i++)
             {
-                sum_hr   += smooth_buf.heart_rate[i];
-                sum_spo2 += smooth_buf.spo2[i];
+                sum_hr += smooth_buf.heart_rate[i];
             }
             smooth_buf.heart_rate[0] = (uint8_t)(sum_hr / SMOOTH_BUF_SIZE);
-            smooth_buf.spo2[0]       = (uint8_t)(sum_spo2 / SMOOTH_BUF_SIZE);
-            new_hr   = smooth_buf.heart_rate[0];
-            new_spo2 = smooth_buf.spo2[0];
+            new_hr = smooth_buf.heart_rate[0];
 
             smooth_buf.index = 1;
         }
     }
     else if (smooth_buf.averaged == 1)
     {
-        uint8_t last_hr   = smooth_buf.heart_rate[smooth_buf.index - 1];
-        uint8_t last_spo2 = smooth_buf.spo2[smooth_buf.index - 1];
+        uint8_t last_hr = smooth_buf.heart_rate[smooth_buf.index - 1];
 
         uint8_t pos_dev_ok = (abs((int)new_hr_pos - (int)last_hr) <= 10);
         uint8_t neg_dev_ok = (abs((int)new_hr_neg - (int)last_hr) <= 10);
-        uint8_t spo2_ok    = (abs((int)new_spo2 - (int)last_spo2) <= 5);
 
         if (pos_dev_ok || neg_dev_ok)
         {
@@ -323,20 +314,17 @@ void MAX30102_CalcVitalSigns(uint16_t *peaks)
             else if (pos_dev_ok && neg_dev_ok) new_hr = (new_hr_pos + new_hr_neg) / 2;
 
             smooth_buf.heart_rate[smooth_buf.index] = new_hr;
-            if (spo2_ok) smooth_buf.spo2[smooth_buf.index] = new_spo2;
             smooth_buf.index++;
             if (smooth_buf.index >= SMOOTH_BUF_SIZE) smooth_buf.index = 0;
         }
         else
         {
             /* 偏差过大, 拒收脏数据, 维持上次稳态值 */
-            new_hr   = last_hr;
-            new_spo2 = last_spo2;
+            new_hr = last_hr;
         }
     }
 
     result.heart_rate = new_hr;
-    result.spo2       = new_spo2;
 }
 
 /* 心率滑动平均滤波 */

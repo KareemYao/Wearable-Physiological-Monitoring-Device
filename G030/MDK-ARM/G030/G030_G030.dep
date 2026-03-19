@@ -44,8 +44,8 @@ I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart.h)(0x69317A18)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h)(0x69317A18)
 I (../Core/Inc/adc.h)(0x694A1AE9)
 I (../Core/Inc/main.h)(0x694A1AE9)
-F (..\Core\Src\bsp_ir_red_cal2.c)(0x69B67D5B)(--c99 -c --cpu Cortex-M0+ -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_G030-ID:\Keil5\Pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32G030xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32G030xx-o g030\bsp_ir_red_cal2.o --omf_browse g030\bsp_ir_red_cal2.crf --depend g030\bsp_ir_red_cal2.d)
-I (../Core/Inc/bsp_ir_red_cal2.h)(0x69B66608)
+F (..\Core\Src\bsp_ir_red_cal2.c)(0x69BC20B0)(--c99 -c --cpu Cortex-M0+ -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_G030-ID:\Keil5\Pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32G030xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32G030xx-o g030\bsp_ir_red_cal2.o --omf_browse g030\bsp_ir_red_cal2.crf --depend g030\bsp_ir_red_cal2.d)
+I (../Core/Inc/bsp_ir_red_cal2.h)(0x69BC1E88)
 I (D:\Keil5\Core\ARM\ARMCC\include\stdint.h)(0x6025237E)
 I (D:\Keil5\Core\ARM\ARMCC\include\math.h)(0x60252378)
 I (D:\Keil5\Core\ARM\ARMCC\include\string.h)(0x6025237E)
@@ -129,7 +129,7 @@ I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h)(0x69317A18)
 I (../Core/Inc/tim.h)(0x694A1AE9)
 I (../Core/Inc/main.h)(0x694A1AE9)
 I (../Core/Inc/bsp_soft_i2c.h)(0x69B2EF87)
-I (../Core/Inc/bsp_ir_red_cal2.h)(0x69B66608)
+I (../Core/Inc/bsp_ir_red_cal2.h)(0x69BC1E88)
 I (../Core/Inc/bsp_usart_dma.h)(0x69B2F0F9)
 I (D:\Keil5\Core\ARM\ARMCC\include\string.h)(0x6025237E)
 I (D:\Keil5\Core\ARM\ARMCC\include\stdlib.h)(0x60252374)
@@ -138,7 +138,7 @@ I (../Core/Inc/bsp_adc_dma.h)(0x69B42E75)
 I (D:\Keil5\Core\ARM\ARMCC\include\stdio.h)(0x60252374)
 I (D:\Keil5\Core\ARM\ARMCC\include\math.h)(0x60252378)
 I (../Core/Inc/adc.h)(0x694A1AE9)
-F (..\Core\Src\bsp_usart_dma.c)(0x69B67DA6)(--c99 -c --cpu Cortex-M0+ -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_G030-ID:\Keil5\Pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32G030xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32G030xx-o g030\bsp_usart_dma.o --omf_browse g030\bsp_usart_dma.crf --depend g030\bsp_usart_dma.d)
+F (..\Core\Src\bsp_usart_dma.c)(0x69BC170F)(--c99 -c --cpu Cortex-M0+ -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_G030-ID:\Keil5\Pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32G030xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32G030xx-o g030\bsp_usart_dma.o --omf_browse g030\bsp_usart_dma.crf --depend g030\bsp_usart_dma.d)
 I (../Core/Inc/bsp_usart_dma.h)(0x69B2F0F9)
 I (D:\Keil5\Core\ARM\ARMCC\include\string.h)(0x6025237E)
 I (D:\Keil5\Core\ARM\ARMCC\include\stdlib.h)(0x60252374)
@@ -180,9 +180,9 @@ I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_tim_ex.h)(0x69317A18)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart.h)(0x69317A18)
 I (../Drivers/STM32G0xx_HAL_Driver/Inc/stm32g0xx_hal_uart_ex.h)(0x69317A18)
 I (../Core/Inc/usart.h)(0x694A1AE9)
-I (../Core/Inc/bsp_ir_red_cal2.h)(0x69B66608)
+I (../Core/Inc/bsp_ir_red_cal2.h)(0x69BC1E88)
 F (..\Core\Inc\bsp_adc_dma.h)(0x69B42E75)()
-F (..\Core\Inc\bsp_ir_red_cal2.h)(0x69B66608)()
+F (..\Core\Inc\bsp_ir_red_cal2.h)(0x69BC1E88)()
 F (..\Core\Inc\bsp_soft_i2c.h)(0x69B2EF87)()
 F (..\Core\Inc\bsp_tim.h)(0x69B2F0F9)()
 F (..\Core\Inc\bsp_usart_dma.h)(0x69B2F0F9)()
@@ -235,7 +235,7 @@ I (../Core/Inc/bsp_adc_dma.h)(0x69B42E75)
 I (D:\Keil5\Core\ARM\ARMCC\include\math.h)(0x60252378)
 I (../Core/Inc/bsp_tim.h)(0x69B2F0F9)
 I (../Core/Inc/bsp_soft_i2c.h)(0x69B2EF87)
-I (../Core/Inc/bsp_ir_red_cal2.h)(0x69B66608)
+I (../Core/Inc/bsp_ir_red_cal2.h)(0x69BC1E88)
 I (../Core/Inc/bsp_usart_dma.h)(0x69B2F0F9)
 I (D:\Keil5\Core\ARM\ARMCC\include\stdlib.h)(0x60252374)
 F (../Core/Src/gpio.c)(0x69B2AF52)(--c99 -c --cpu Cortex-M0+ -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc -I ../Drivers/STM32G0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32G0xx/Include -I ../Drivers/CMSIS/Include-I.\RTE\_G030-ID:\Keil5\Pack\ARM\CMSIS\5.9.0\CMSIS\Core\Include-D__UVISION_VERSION="537" -D_RTE_ -DSTM32G030xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32G030xx-o g030\gpio.o --omf_browse g030\gpio.crf --depend g030\gpio.d)
