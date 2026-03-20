@@ -1,3 +1,5 @@
+G030/MDK-ARM/G030/
+
 # Prerequisites
 *.d
 
@@ -9,8 +11,11 @@
 
 # Linker output
 *.ilk
+*.lst
+*.crf
 *.map
 *.exp
+*.axf
 
 # Precompiled Headers
 *.gch
@@ -36,6 +41,9 @@
 *.x86_64
 *.hex
 
+# Build Log
+*.htm
+
 # Debug files
 *.dSYM/
 *.su
@@ -53,3 +61,11 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+
+# Debug Configuration files
+*.dbgconf*
+*.uvguix.*
+
+# Run-Time-Environment Configuration File
+RTE_Components.h
