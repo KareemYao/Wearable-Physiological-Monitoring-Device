@@ -14,16 +14,11 @@ static volatile uint8_t tx_complete = 1;    /* 发送完成标志 */
 /* UART DMA 发送 */
 void UART_Transmit_DMA(char *buf)
 {
-    if (tx_complete == 0)
-    {
-        tx_complete = 1;
-    }
-
-    if (tx_complete)
-    {
-        tx_complete = 0;
-        HAL_UART_Transmit_DMA(&huart1, (uint8_t *)buf, 6);
-    }
+    if (!tx_complete)
+        return;
+		
+    tx_complete = 0;
+    HAL_UART_Transmit_DMA(&huart1, (uint8_t *)buf, 6);
 }
 
 /* UART DMA 发送完成回调 */
