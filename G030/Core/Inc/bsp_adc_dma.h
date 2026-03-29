@@ -29,9 +29,6 @@ extern volatile uint16_t BSP_RAM_Rece[BSP_RAM_RECE_SIZE];
 
 /* Exported functions --------------------------------------------------------*/
 void    BSP_ADC_StartDMA(ADC_HandleTypeDef *hadc);
-void    BSP_ADC_Process(void);
-int8_t  Get_Temperature(float current_voltage);
-uint8_t Get_Battery_Capacity(int8_t current_temp, float current_vol);
 void    Task_Battery_Monitor(void);
 
 #ifdef __cplusplus

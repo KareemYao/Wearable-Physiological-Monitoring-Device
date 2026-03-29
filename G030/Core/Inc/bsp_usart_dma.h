@@ -22,7 +22,6 @@ extern "C" {
 #define PACKET_TAIL         0xBB    /* 包尾字节 */
 
 /* Exported functions --------------------------------------------------------*/
-void UART_Transmit_DMA(char *buf);
 void Send_DataPacket(void);
 
 #ifdef __cplusplus

@@ -20,6 +20,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -33,6 +34,7 @@
 #include "bsp_soft_i2c.h"
 #include "bsp_ir_red_cal2.h"
 #include "bsp_usart_dma.h"
+#include "bsp_ads1292.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,10 +55,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+volatile uint8_t g_ads1292_data_ready = 0;   /* ADS1292 新数据就绪标志 */
 volatile uint8_t adc_data_ready = 0;
 uint8_t fifo_buffer[6] = {0};
 uint8_t reg_commands[8] = {0x04, 0x05, 0x06, 0x08, 0x0A, 0x0C, 0x0D, 0x09};
-uint8_t commands[8] = {0x00, 0x00, 0x00, 0x00, 0x07, 0x18, 0x18, 0x03};
+uint8_t commands[8]     = {0x00, 0x00, 0x00, 0x00, 0x07, 0x18, 0x18, 0x03};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,24 +106,38 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   HR_Device_Init(0x57, reg_commands, commands, 8);
   BSP_TIM_Init(&htim1);
   BSP_TIM_Start_IT();
+  ADS1292_Init_Config();
+  volatile uint8_t device_id = 0;
+  device_id = ADS1292_Read_Register(0x00);  /* 读取 ID 寄存器 */
+  /* 启动连续转换 */
+  ADS1292_Start_Continuous_Conversion();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	  int32_t ecg_data = 0;
+    int32_t resp_data = 0;
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if (adc_data_ready == 1)
-   {
-		 Task_Battery_Monitor();
-	   adc_data_ready = 0;
-   }
+    if (adc_data_ready == 1)
+    {
+      Task_Battery_Monitor();
+      adc_data_ready = 0;
+    }
+    if (g_ads1292_data_ready)
+    {
+      g_ads1292_data_ready = 0;
+      ADS1292_Read_ECG_Data(&ecg_data, &resp_data);
+      ecg_data = Notch_Filter(ecg_data);
+    }
   }
   /* USER CODE END 3 */
 }
@@ -171,13 +188,21 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-    if(hadc->Instance == ADC1)
+    if (hadc->Instance == ADC1)
     {
-        HAL_ADC_Stop_DMA(hadc); 
+        HAL_ADC_Stop_DMA(hadc);
+        adc_data_ready = 1;
+    }
+}
 
-        adc_data_ready = 1; 
+/* DRDY 下降沿中断回调 */
+void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == ADS1292_DRDY_PIN)
+    {
+        g_ads1292_data_ready = 1;
     }
 }
 /* USER CODE END 4 */

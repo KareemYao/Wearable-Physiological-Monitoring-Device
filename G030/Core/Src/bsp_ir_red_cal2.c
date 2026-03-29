@@ -67,9 +67,9 @@ static float ir_dc_global  = 0.0f;                  /* 红外光全局 DC 值 */
 
 /* Global variables ----------------------------------------------------------*/
 FilteredVitalSigns g_vital_signs = {0};
-MAX30102_Result_t  result = {0};
-uint8_t new_hr_pos   = 0;
-uint8_t new_hr_neg   = 0;
+static MAX30102_Result_t  result = {0};
+static uint8_t new_hr_pos   = 0;
+static uint8_t new_hr_neg   = 0;
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -209,7 +209,7 @@ static void ExtractTwoExtremes(uint8_t is_positive, uint8_t *ext_idx, float *ext
 /* Exported functions --------------------------------------------------------*/
 
 /* 波峰检测: 输出 4 个极值索引 (0~1 正峰, 2~3 负谷) */
-void MAX30102_DetectPeaks(uint16_t *peaks)
+static void MAX30102_DetectPeaks(uint16_t *peaks)
 {
     memset(&reuse_mem.stage_peaks, 0, sizeof(reuse_mem.stage_peaks));
 
@@ -221,7 +221,7 @@ void MAX30102_DetectPeaks(uint16_t *peaks)
 }
 
 /* 计算心率和血氧 */
-void MAX30102_CalcVitalSigns(uint16_t *peaks)
+static void MAX30102_CalcVitalSigns(uint16_t *peaks)
 {
     result.heart_rate = 0;
     result.spo2 = 0;
@@ -328,7 +328,7 @@ void MAX30102_CalcVitalSigns(uint16_t *peaks)
 }
 
 /* 心率滑动平均滤波 */
-uint8_t HR_SlidingAvgFilter(uint8_t new_hr)
+static uint8_t HR_SlidingAvgFilter(uint8_t new_hr)
 {
     static uint8_t valid_count = 0;
     uint32_t sum = 0;
@@ -346,7 +346,7 @@ uint8_t HR_SlidingAvgFilter(uint8_t new_hr)
 }
 
 /* 血氧滑动平均滤波 */
-uint8_t SPO2_SlidingAvgFilter(uint8_t new_spo2)
+static uint8_t SPO2_SlidingAvgFilter(uint8_t new_spo2)
 {
     static uint8_t valid_count = 0;
     uint32_t sum = 0;

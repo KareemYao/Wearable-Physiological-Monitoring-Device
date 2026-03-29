@@ -37,14 +37,9 @@ typedef struct {
 
 /* Exported variables --------------------------------------------------------*/
 extern FilteredVitalSigns g_vital_signs;
-extern MAX30102_Result_t  result;
-extern uint8_t new_hr_pos;
-extern uint8_t new_hr_neg;
 
 /* Exported functions --------------------------------------------------------*/
 void MAX30102_ProcessData(uint8_t *fifo_buffuer);
-void MAX30102_DetectPeaks(uint16_t *peaks);
-void MAX30102_CalcVitalSigns(uint16_t *peaks);
 
 #ifdef __cplusplus
 }

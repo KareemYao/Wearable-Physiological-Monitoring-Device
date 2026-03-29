@@ -12,7 +12,7 @@ static volatile uint8_t tx_complete = 1;    /* 发送完成标志 */
 /* Exported functions --------------------------------------------------------*/
 
 /* UART DMA 发送 */
-void UART_Transmit_DMA(char *buf)
+static void UART_Transmit_DMA(char *buf)
 {
     if (!tx_complete)
         return;
