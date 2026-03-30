@@ -8,7 +8,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 static TIM_HandleTypeDef *s_htim = NULL;
-static uint16_t data_time_counter = 0;
+static uint8_t data_time_counter = 0;
 
 /* Exported functions --------------------------------------------------------*/
 
