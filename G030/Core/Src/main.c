@@ -34,7 +34,7 @@
 #include "bsp_soft_i2c.h"
 #include "bsp_ir_red_cal2.h"
 #include "bsp_usart_dma.h"
-#include "bsp_ads1292.h"
+#include "NLsocket.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,11 +55,11 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-volatile uint8_t g_ads1292_data_ready = 0;   /* ADS1292 新数据就绪标志 */
 volatile uint8_t adc_data_ready = 0;
 uint8_t fifo_buffer[6] = {0};
 uint8_t reg_commands[8] = {0x04, 0x05, 0x06, 0x08, 0x0A, 0x0C, 0x0D, 0x09};
 uint8_t commands[8]     = {0x00, 0x00, 0x00, 0x00, 0x07, 0x18, 0x18, 0x03};
+NLsocket nlsct = NL_SOCKET_INIT(&huart1);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,20 +108,41 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  while(
+    nlsct.Basic
+      .Send_AT_cmd(nlsct.uart_handle, nlsct.AT_buffer, (const uint8_t*)"AT+RST\r\n",strlen("AT+RST\r\n"),WAIT_TIME_MS) != HAL_OK
+  )  {
+    nlsct.Basic
+      .Send_AT_cmd(nlsct.uart_handle, nlsct.AT_buffer, (const uint8_t*)"+++",strlen("+++"),WAIT_TIME_MS) ;
+  };
+  while(
+    nlsct.Basic.Send_AT_cmd(
+      nlsct.uart_handle,
+      nlsct.AT_buffer,
+      (const uint8_t*)"AT+TRANSENTER=1,1\r\n",
+      strlen("AT+TRANSENTER=1,1\r\n"),
+      WAIT_TIME_MS
+    ) && strstr((const char*)nlsct.AT_buffer,"OK") == NULL
+  );
+  while(
+    nlsct.Basic.Send_AT_cmd(nlsct.uart_handle,nlsct.AT_buffer,(const uint8_t*)"AT+SLEMODE?\r\n",strlen("AT+SLEMODE?\r\n"),WAIT_TIME_MS) != HAL_OK
+    && strstr((const char*)nlsct.AT_buffer,"+SLEMODE:1") == NULL
+  ){
+    nlsct.Basic.Send_AT_cmd(nlsct.uart_handle,nlsct.AT_buffer,(const uint8_t*)"AT+SLEMODE=1\r\n",strlen("AT+SLEMODE=1\r\n"),WAIT_TIME_MS);
+  };
+  while(
+    nlsct.Basic.Send_AT_cmd(
+      nlsct.uart_handle,
+      nlsct.AT_buffer,
+      (const uint8_t*)"AT+SLECONNECT=94c960f03832\r\n",
+      strlen("AT+SLECONNECT=94c960f03832\r\n"),
+      WAIT_TIME_MS
+    ) != HAL_OK
+    && strstr((const char*)nlsct.AT_buffer,"OK") == NULL
+  );
   HR_Device_Init(0x57, reg_commands, commands, 8);
   BSP_TIM_Init(&htim1);
   BSP_TIM_Start_IT();
-  ADS1292_Init_Config();
-  volatile uint8_t device_id = 0;
-  device_id = ADS1292_Read_Register(0x00);  /* 读取 ID 寄存器 */
-  /* 启动连续转换 */
-  ADS1292_Start_Continuous_Conversion();
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-	  int32_t ecg_data = 0;
-    int32_t resp_data = 0;
   while (1)
   {
     /* USER CODE END WHILE */
@@ -131,12 +152,6 @@ int main(void)
     {
       Task_Battery_Monitor();
       adc_data_ready = 0;
-    }
-    if (g_ads1292_data_ready)
-    {
-      g_ads1292_data_ready = 0;
-      ADS1292_Read_ECG_Data(&ecg_data, &resp_data);
-      ecg_data = Notch_Filter(ecg_data);
     }
   }
   /* USER CODE END 3 */
@@ -197,14 +212,6 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     }
 }
 
-/* DRDY 下降沿中断回调 */
-void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == ADS1292_DRDY_PIN)
-    {
-        g_ads1292_data_ready = 1;
-    }
-}
 /* USER CODE END 4 */
 
 /**
